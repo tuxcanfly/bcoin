@@ -1,77 +1,83 @@
 {
   "name": "bcoin",
-  "version": "1.0.0-beta.14",
+  "version": "1.0.0-alpha",
   "description": "Bitcoin bike-shed",
-  "license": "MIT",
-  "repository": "git://github.com/bcoin-org/bcoin.git",
-  "homepage": "https://github.com/bcoin-org/bcoin",
-  "bugs": {
-    "url": "https://github.com/bcoin-org/bcoin/issues"
+  "main": "./lib/bcoin.js",
+  "bin": {
+    "bcoin-node": "./bin/node",
+    "bcoin-spvnode": "./bin/spvnode",
+    "bcoin-cli": "./bin/cli",
+    "bcoin": "./bin/bcoin"
   },
-  "author": "Fedor Indutny <fedor@indutny.com>",
-  "contributors": [
-    "Christopher Jeffrey <chjjeffrey@gmail.com>"
-  ],
+  "preferGlobal": true,
+  "scripts": {
+    "test": "mocha --reporter spec test/*-test.js",
+    "browserify": "browserify --im -o browser/bcoin.js lib/bcoin.js",
+    "uglify": "uglifyjs -m -o browser/bcoin.min.js browser/bcoin.js",
+    "clean": "rm browser/bcoin.js browser/bcoin.min.js",
+    "lint": "jshint lib/ || exit 0"
+  },
+  "repository": "git://github.com/bcoin-org/bcoin.git",
   "keywords": [
     "bcoin",
     "bitcoin",
     "blockchain",
-    "cryptocurrency",
     "wallet"
   ],
+  "author": "Fedor Indutny <fedor@indutny.com>",
+  "contributors": [
+    "Christopher Jeffrey <chjjeffrey@gmail.com> (https://github.com/chjj)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bcoin-org/bcoin/issues"
+  },
+  "homepage": "https://github.com/bcoin-org/bcoin",
   "engines": {
-    "node": ">=7.6.0"
+    "node": ">= 0.11.0"
   },
   "dependencies": {
-    "bn.js": "4.11.8",
-    "elliptic": "6.4.0",
-    "n64": "0.0.18"
+    "bn.js": "4.11.6",
+    "elliptic": "6.3.2"
   },
   "optionalDependencies": {
-    "bcoin-native": "0.0.23",
-    "leveldown": "1.7.2",
-    "secp256k1": "3.3.0",
-    "socket.io": "2.0.3",
-    "socket.io-client": "2.0.3"
+    "bcoin-native": "0.0.9",
+    "leveldown": "1.5.0",
+    "secp256k1": "3.2.0",
+    "socket.io": "1.4.8",
+    "socket.io-client": "1.4.8"
   },
   "devDependencies": {
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-es2016": "^6.24.1",
-    "babel-preset-es2017": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "eslint": "^4.4.1",
-    "hash.js": "^1.1.3",
-    "jsdoc": "^3.5.4",
-    "level-js": "^2.2.4",
-    "mocha": "^3.5.0",
-    "node-loader": "^0.6.0",
-    "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
-    "webpack": "^3.5.4"
+    "babelify": "7.3.0",
+    "babel-preset-es2015": "6.14.0",
+    "babel-polyfill": "6.13.0",
+    "babel-plugin-transform-runtime": "6.12.0",
+    "babel-plugin-transform-regenerator": "6.14.0",
+    "browserify": "13.1.0",
+    "hash.js": "1.0.3",
+    "jsdoc": "3.4.0",
+    "level-js": "2.2.4",
+    "mocha": "3.0.2",
+    "uglify-js": "2.7.3"
   },
-  "main": "./lib/bcoin.js",
-  "bin": {
-    "bcoin": "./bin/bcoin",
-    "bcoin-cli": "./bin/cli",
-    "bcoin-node": "./bin/node",
-    "bcoin-spvnode": "./bin/spvnode"
+  "browser": {
+    "./lib/http/base": "./browser/empty.js",
+    "./lib/http/client": "./browser/empty.js",
+    "./lib/http/request": "./browser/empty.js",
+    "./lib/http/rpcclient": "./browser/empty.js",
+    "./lib/http/server": "./browser/empty.js",
+    "./lib/http/wallet": "./browser/empty.js",
+    "./lib/db/flat": "./browser/empty.js",
+    "./lib/chain/blockdb": "./lib/chain/blockdb-browser.js",
+    "fs": "./browser/empty.js",
+    "crypto": "./browser/empty.js",
+    "child_process": "./browser/empty.js",
+    "os": "./browser/empty.js",
+    "net": "./browser/empty.js",
+    "bcoin-native": "./browser/empty.js",
+    "secp256k1": "./browser/empty.js"
   },
-  "scripts": {
-    "clean": "rm -f {browser/,}{bcoin.js,bcoin-worker.js}",
-    "docs": "jsdoc -c jsdoc.json",
-    "lint": "eslint $(cat .eslintfiles) || exit 0",
-    "lint-file": "eslint",
-    "test": "mocha --reporter spec test/*.js",
-    "test-browser":
-      "BCOIN_NO_NATIVE=1 BCOIN_NO_SECP256K1=1 mocha --reporter spec test/*.js",
-    "test-file": "mocha --reporter spec",
-    "test-file-browser":
-      "BCOIN_NO_NATIVE=1 BCOIN_NO_SECP256K1=1 mocha --reporter spec",
-    "webpack": "webpack --config webpack.browser.js",
-    "webpack-browser": "webpack --config webpack.browser.js",
-    "webpack-compat": "webpack --config webpack.compat.js",
-    "webpack-node": "webpack --config webpack.node.js"
+  "browserify": {
+    "transform": ["./browser/transform.js", "babelify"]
   }
 }
