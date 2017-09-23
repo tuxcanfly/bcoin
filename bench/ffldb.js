@@ -1,34 +1,55 @@
 'use strict';
 
 const fs = require('../lib/utils/fs');
+const path = require('path');
 const bench = require('./bench');
-const FlatFileDB = require('../lib/db/ffldb');
+const co = require('../lib/utils/co');
 const layout = require('../lib/blockchain/layout');
 const networks = require('../lib/protocol/networks');
+const FlatFileDB = require('../lib/db/ffldb');
 
-const ffldb = new FlatFileDB({
-  location: './ffldb-test'
-});
+const TESTDB = './ffldb-test';
+
+const rm = async (dir) => {
+  const files = await fs.readdir(dir);
+  for (const file of files) {
+    const fp = path.join(dir, file);
+    const stat = await fs.lstat(fp);
+    if (stat.isDirectory()) {
+      rm(fp);
+    } else {
+      await fs.unlink(fp);
+    }
+  }
+  fs.rmdir(dir);
+};
+
+const ffldb = new FlatFileDB(TESTDB);
 
 (async () => {
-  // Open and Create
-  await ffldb.open();
+  const open = co.promisify(ffldb.open);
+  try {
+    await open.call(ffldb);
+  } catch (e) {
+    throw e;
+  }
 
-  // Block Header
+  // Block
   {
     const key = layout.b(networks.main.genesis.hash);
     const value = networks.main.genesisBlock;
 
-    ffldb.put(key, value);
-    // dbcache commit
+    const put = co.promisify(ffldb.put);
+    const get = co.promisify(ffldb.get);
 
-    const end = bench('block header');
-    await ffldb.get(layout.b());
-    end();
+    const end = bench('block');
+    await put.call(ffldb, key, value);
+    await get.call(ffldb, key);
+    end(1);
   }
 
-  await fs.unlink('./ffldb-test');
-})().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+  const close = co.promisify(ffldb.close);
+  await close.call(ffldb);
+
+  rm(TESTDB);
+})();
