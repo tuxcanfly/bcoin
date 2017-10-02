@@ -1,7 +1,8 @@
 'use strict';
 
-const fs = require('../lib/utils/fs');
+const assert = require('assert');
 const path = require('path');
+const fs = require('../lib/utils/fs');
 const bench = require('./bench');
 const co = require('../lib/utils/co');
 const layout = require('../lib/blockchain/layout');
@@ -44,12 +45,13 @@ const ffldb = new FlatFileDB(TESTDB);
 
     const end = bench('block');
     await put.call(ffldb, key, value);
-    await get.call(ffldb, key);
+    const expected = await get.call(ffldb, key);
+    assert.strictEqual(expected.toString(), value);
     end(1);
   }
 
   const close = co.promisify(ffldb.close);
   await close.call(ffldb);
 
-  rm(TESTDB);
+  await rm(TESTDB);
 })();
