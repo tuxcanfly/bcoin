@@ -25,6 +25,7 @@
   "dependencies": {
     "bn.js": "4.11.8",
     "elliptic": "6.4.0",
+    "fast-crc32c": "^1.0.4",
     "n64": "0.0.18"
   },
   "optionalDependencies": {
