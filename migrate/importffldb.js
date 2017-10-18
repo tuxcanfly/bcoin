@@ -42,20 +42,21 @@ const blockio = BlockIO({
 
 const blockstream = new BlockStream({network: options.network.type});
 
-blockstream.on('data', async (chunk) => {
-  const block = Block.fromRaw(chunk);
-  const hash = block.rhash();
-  try {
-    await chain.add(block);
-    console.log('imported block %s', hash);
-  } catch (e) {
-    console.warn('%s: ', e);
-  }
-});
-
 const end = new Promise((resolve, reject) => {
-    blockstream.on('close', () => resolve());
-    blockstream.on('error', reject);
+  blockstream.on('data', async (chunk) => {
+      const block = Block.fromRaw(chunk);
+      try {
+        await chain.add(block);
+        console.log('imported block: %s', block.rhash());
+      } catch (e) {
+        console.warn('%s: ', e);
+      }
+  })
+  .on('close', () => {
+    console.log('import finished');
+    resolve();
+  })
+  .on('error', reject);
 });
 
 async function importFlatFiles() {
