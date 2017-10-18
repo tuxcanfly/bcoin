@@ -58,7 +58,7 @@ const end = new Promise((resolve, reject) => {
     blockstream.on('error', reject);
 });
 
-async function importflatfiles() {
+async function importFlatFiles() {
   const [file] = await blockio.scanFiles();
   for (let i=0; i <= file; i++) {
     const path = blockio.filepath(i);
@@ -71,7 +71,7 @@ async function importflatfiles() {
 (async () => {
   await chain.open();
   console.log('Opened %s.', location);
-  await importflatfiles();
+  await importFlatFiles();
   await chain.close();
 })().then(() => {
   console.log('Migration complete.');
