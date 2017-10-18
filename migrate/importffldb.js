@@ -44,18 +44,15 @@ const blockstream = new BlockStream({network: options.network.type});
 
 const end = new Promise((resolve, reject) => {
   blockstream.on('data', async (chunk) => {
-      const block = Block.fromRaw(chunk);
-      try {
-        await chain.add(block);
-        console.log('imported block: %s', block.rhash());
-      } catch (e) {
-        console.warn('%s: ', e);
-      }
+    const block = Block.fromRaw(chunk);
+    try {
+      await chain.add(block);
+      console.log('imported block: %s', block.rhash());
+    } catch (e) {
+      console.warn('%s: ', e);
+    }
   })
-  .on('close', () => {
-    console.log('import finished');
-    resolve();
-  })
+  .on('close', resolve)
   .on('error', reject);
 });
 
