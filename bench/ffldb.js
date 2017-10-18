@@ -5,11 +5,15 @@ const fs = require('../lib/utils/fs');
 const path = require('path');
 const bench = require('./bench');
 const networks = require('../lib/protocol/networks');
+const Block = require('../lib/primitives/block');
 const FlatFileDB = require('../lib/db/ffldb');
+const BlockStream = require('../lib/utils/blockstream');
 
 const TESTDB = './ffldb-test';
+const TESTFDB = 'test/data/blocks.fdb';
 
 const ffldb = new FlatFileDB(TESTDB, {'network': 'simnet'});
+const keys = [];
 
 const rm = async (dir) => {
   const files = await fs.readdir(dir);
@@ -45,6 +49,35 @@ const rm = async (dir) => {
     }
 
     end(1000000);
+  }
+
+  // Blocks
+  {
+    const blockstream = new BlockStream({network: 'simnet'});
+
+    const done = new Promise((resolve, reject) => {
+      blockstream.on('data', async (chunk) => {
+        const block = Block.fromRaw(chunk);
+        const hash = block.hash();
+        await ffldb.putBlock(hash, block.toRaw());
+        keys.push(hash);
+      })
+      .on('finish', resolve)
+      .on('error', reject);
+    });
+
+    const blockfile = fs.createReadStream(TESTFDB);
+    blockfile.pipe(blockstream);
+    await done;
+
+    const end = bench('blocks');
+
+    for (let i = 0; i < 10000; i++) {
+      for (const key of keys)
+        await ffldb.getBlock(key);
+    }
+
+    end(10000);
   }
 
   await ffldb.close();
