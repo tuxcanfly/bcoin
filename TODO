@@ -1,0 +1,24 @@
+* gcs - transaction hash in filter
+
+* hw integration - ledger non-interactive
+
+-> 1-2 PRs a week
+
+* add indexes -> basic + header, extended + header
+* getcfilter, getfilterheader
+* rebase
+* use gcs -> golomb repo
+
+* wallet - use refactor branch
+* node - index gcs  filters
+* wallet - neutrino client
+
+* neutrino
+* mnemonic import w/ password
+* trezor hw signing ???
+
+* add benchmarks to PR
+* wrap up addr tests
+* guides
+
+* investigations
