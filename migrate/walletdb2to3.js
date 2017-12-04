@@ -188,7 +188,7 @@ async function updateTXMap() {
 
 function pathFromRaw(data) {
   const path = {};
-  const p = bio.read(data);
+  const p = bio.reader(data);
 
   path.wid = p.readU32();
   path.name = p.readVarString('utf8');
@@ -221,7 +221,7 @@ function pathFromRaw(data) {
 }
 
 function parsePaths(data, hash) {
-  const p = bio.read(data);
+  const p = bio.reader(data);
   const out = {};
 
   while (p.left()) {
@@ -235,7 +235,7 @@ function parsePaths(data, hash) {
 }
 
 function parseWallets(data) {
-  const p = bio.read(data);
+  const p = bio.reader(data);
   const wallets = [];
   while (p.left())
     wallets.push(p.readU32());
@@ -243,7 +243,7 @@ function parseWallets(data) {
 }
 
 function serializeWallets(wallets) {
-  const p = bio.write();
+  const p = bio.static();
 
   for (let i = 0; i < wallets.length; i++) {
     const wid = wallets[i];
@@ -262,7 +262,7 @@ function readAccountKey(key) {
 
 function accountFromRaw(data, dbkey) {
   const account = {};
-  const p = bio.read(data);
+  const p = bio.reader(data);
 
   dbkey = readAccountKey(dbkey);
   account.wid = dbkey.wid;
@@ -302,7 +302,7 @@ function accountFromRaw(data, dbkey) {
 
 function walletFromRaw(data) {
   const wallet = {};
-  const p = bio.read(data);
+  const p = bio.reader(data);
 
   wallet.network = bcoin.network.fromMagic(p.readU32());
   wallet.wid = p.readU32();
@@ -327,7 +327,7 @@ function walletFromRaw(data) {
 
 function keyFromRaw(data, network) {
   const ring = {};
-  const p = bio.read(data);
+  const p = bio.reader(data);
 
   ring.witness = p.readU8() === 1;
 

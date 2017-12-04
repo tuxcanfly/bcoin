@@ -40,7 +40,7 @@ async function checkVersion() {
 }
 
 function entryFromRaw(data) {
-  const p = bio.read(data, true);
+  const p = bio.reader(data, true);
   const hash = hash256.digest(p.readBytes(80));
   const entry = {};
 

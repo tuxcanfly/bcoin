@@ -173,7 +173,7 @@ async function reserializeUndo() {
     if (!item)
       break;
 
-    const br = bio.read(item.value);
+    const br = bio.reader(item.value);
     const undo = new UndoCoins();
 
     while (br.left()) {
@@ -218,7 +218,7 @@ function injectCoin(undo, coin) {
 }
 
 function defaultOptions() {
-  const bw = bio.write();
+  const bw = bio.static();
   let flags = 0;
 
   if (options.spv)
@@ -243,7 +243,7 @@ function defaultOptions() {
 }
 
 function defaultDeployments() {
-  const bw = bio.write();
+  const bw = bio.static();
 
   bw.writeU8(options.network.deploys.length);
 

@@ -88,7 +88,7 @@ class WSProxy extends EventEmitter {
         return;
       }
 
-      const bw = bio.write();
+      const bw = bio.static();
       bw.writeU32(nonce);
       bw.writeBytes(state.snonce);
       bw.writeU32(port);

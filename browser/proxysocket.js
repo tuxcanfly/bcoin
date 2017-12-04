@@ -112,7 +112,7 @@ class ProxySocket extends EventEmitter {
     let nonce = 0;
 
     if (this.info.pow) {
-      const bw = bio.write();
+      const bw = bio.static();
 
       bw.writeU32(nonce);
       bw.writeBytes(this.snonce);
