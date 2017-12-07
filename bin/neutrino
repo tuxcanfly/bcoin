@@ -6,7 +6,7 @@ process.title = 'bcoin';
 
 const NeutrinoNode = require('../lib/node/neutrino');
 
-const node = NeutrinoNode({
+const node = new NeutrinoNode({
   config: true,
   argv: true,
   env: true,
