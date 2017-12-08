@@ -116,7 +116,7 @@ async function updateState() {
   console.log('Updating state...');
 
   if (raw.length === 40) {
-    const bw = bio.write(41);
+    const bw = bio.static(41);
     bw.writeBytes(raw);
     bw.writeU8(1);
     parent.put(layout.R.build(), bw.render());
@@ -153,7 +153,7 @@ async function updateBlockMap() {
         map.add(wid);
     }
 
-    const bw = bio.write(sizeMap(map));
+    const bw = bio.static(sizeMap(map));
     serializeMap(bw, map);
 
     parent.put(key, bw.render());
@@ -233,13 +233,13 @@ async function updateCoins(wid, bucket, batch) {
   let total = 0;
 
   await iter.each((key, value) => {
-    const br = bio.read(value, true);
+    const br = bio.reader(value, true);
 
     Coin.fromReader(br);
     br.readU8();
 
     if (br.left() === 0) {
-      const bw = bio.write(value.length + 1);
+      const bw = bio.static(value.length + 1);
       bw.writeBytes(value);
       bw.writeU8(0);
       batch.put(key, bw.render());
@@ -270,13 +270,13 @@ async function updateTX(wid, bucket, batch) {
     if (!raw) {
       map = new Set();
     } else {
-      const br = bio.read(raw, true);
+      const br = bio.reader(raw, true);
       map = parseMap(br);
     }
 
     map.add(wid);
 
-    const bw = bio.write(sizeMap(map));
+    const bw = bio.static(sizeMap(map));
     serializeMap(bw, map);
     batch.put(layout.T.build(hash), bw.render());
 
@@ -307,7 +307,7 @@ async function updateWalletBalance(wid, bucket, batch) {
   console.log('Updating wallet balance for %d...', wid);
 
   await iter.each((key, value) => {
-    const br = bio.read(value, true);
+    const br = bio.reader(value, true);
     const coin = Coin.fromReader(br);
     const spent = br.readU8() === 1;
 
@@ -329,7 +329,7 @@ async function updateAccountBalances(wid, bucket, batch) {
   const raw = await db.get(layout.w.build(wid));
   assert(raw);
 
-  const br = bio.read(raw, true);
+  const br = bio.reader(raw, true);
 
   br.readU32();
   br.readU32();
@@ -370,7 +370,7 @@ async function updateAccountBalance(wid, acct, bucket, batch) {
     const [, hash, index] = tlayout.C.parse(key);
     const raw = await bucket.get(tlayout.c.build(hash, index));
     assert(raw);
-    const br = bio.read(raw, true);
+    const br = bio.reader(raw, true);
     const coin = Coin.fromReader(br);
     const spent = br.readU8() === 1;
 
@@ -394,7 +394,7 @@ async function updateWallet(wid) {
 
   console.log('Updating wallet: %d.', wid);
 
-  const br = bio.read(raw, true);
+  const br = bio.reader(raw, true);
 
   br.readU32(); // Skip network.
   br.readU32(); // Skip wid.
@@ -409,11 +409,11 @@ async function updateWallet(wid) {
   // _out of_ varint serialization.
   let key = br.readVarBytes();
 
-  const kr = bio.read(key, true);
+  const kr = bio.reader(key, true);
 
   // Unencrypted?
   if (kr.readU8() === 0) {
-    const bw = bio.write();
+    const bw = bio.static();
     bw.writeU8(0);
 
     // Skip useless varint.
@@ -484,7 +484,7 @@ async function updateAccount(wid, acct) {
 
   console.log('Updating account: %d/%d...', wid, acct);
 
-  const br = bio.read(raw, true);
+  const br = bio.reader(raw, true);
 
   const name = br.readVarString('ascii');
   const initialized = br.readU8() === 1;
@@ -523,7 +523,7 @@ async function updateAccount(wid, acct) {
     keys.push(key);
   }
 
-  const bw = bio.write();
+  const bw = bio.static();
 
   let flags = 0;
 
@@ -577,7 +577,7 @@ async function updatePaths() {
   let total = 0;
 
   await iter.each((key, value) => {
-    const br = bio.read(value, true);
+    const br = bio.reader(value, true);
 
     const account = br.readU32();
     const keyType = br.readU8();
@@ -612,7 +612,7 @@ async function updatePaths() {
 
     type -= 2;
 
-    const bw = bio.write();
+    const bw = bio.static();
 
     bw.writeU32(account);
     bw.writeU8(keyType);
@@ -685,7 +685,7 @@ class BlockMapRecord {
   }
 
   fromRaw(data) {
-    const br = bio.read(data);
+    const br = bio.reader(data);
     const count = br.readU32();
 
     for (let i = 0; i < count; i++) {
@@ -716,7 +716,7 @@ class BlockMapRecord {
 
   toRaw() {
     const size = this.getSize();
-    const bw = bio.write(size);
+    const bw = bio.static(size);
 
     bw.writeU32(this.txs.size);
 
@@ -792,7 +792,7 @@ class TXMapRecord {
 
   toRaw() {
     const size = this.getSize();
-    return this.toWriter(bio.write(size)).render();
+    return this.toWriter(bio.static(size)).render();
   }
 
   fromReader(br) {
@@ -801,7 +801,7 @@ class TXMapRecord {
   }
 
   fromRaw(data) {
-    return this.fromReader(bio.read(data));
+    return this.fromReader(bio.reader(data));
   }
 
   static fromReader(hash, br) {
@@ -850,7 +850,7 @@ function newBalance() {
 }
 
 function serializeBalance(bal) {
-  const bw = bio.write(32);
+  const bw = bio.static(32);
 
   bw.writeU64(bal.tx);
   bw.writeU64(bal.coin);

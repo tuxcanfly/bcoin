@@ -112,7 +112,7 @@ async function patchPathMaps() {
 }
 
 function parseWallets(data) {
-  const p = bio.read(data);
+  const p = bio.reader(data);
   const wids = [];
 
   while (p.left())
@@ -122,7 +122,7 @@ function parseWallets(data) {
 }
 
 function serializeWallets(wids) {
-  const p = bio.write();
+  const p = bio.static();
 
   p.writeU32(wids.length);
 
@@ -135,7 +135,7 @@ function serializeWallets(wids) {
 }
 
 function accountToRaw(account) {
-  const p = bio.write();
+  const p = bio.static();
 
   p.writeVarString(account.name, 'ascii');
   p.writeU8(account.initialized ? 1 : 0);
@@ -161,7 +161,7 @@ function accountToRaw(account) {
 
 function accountFromRaw(data) {
   const account = {};
-  const p = bio.read(data);
+  const p = bio.reader(data);
 
   account.name = p.readVarString('ascii');
   account.initialized = p.readU8() === 1;
