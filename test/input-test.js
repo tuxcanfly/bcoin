@@ -37,7 +37,7 @@ describe('Input', function() {
   it('should return same raw on fromReader', () => {
     [input1, input2, input3].forEach((rawinput) => {
       const raw = rawinput.slice();
-      const input = Input.fromReader(bio.read(raw));
+      const input = Input.fromReader(bio.reader(raw));
 
       assert.bufferEqual(raw, input.toRaw());
     });

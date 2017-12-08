@@ -86,7 +86,7 @@ common.writeTX = function writeTX(name, tx, view) {
 };
 
 function parseUndo(data) {
-  const br = bio.read(data);
+  const br = bio.reader(data);
   const items = [];
 
   while (br.left()) {
@@ -98,7 +98,7 @@ function parseUndo(data) {
 }
 
 function serializeUndo(items) {
-  const bw = bio.write();
+  const bw = bio.static();
 
   for (const item of items) {
     bw.writeI64(item.value);
