@@ -523,7 +523,7 @@ async function getMeta(coin, prevout) {
     return [1, 1, false];
   }
 
-  const br = bio.reader(coinsRaw);
+  const br = bio.read(coinsRaw);
   const version = br.readVarint();
   const height = br.readU32();
 
@@ -576,7 +576,7 @@ async function isMainChain(entry, tip) {
 }
 
 function entryFromRaw(data) {
-  const br = bio.reader(data, true);
+  const br = bio.read(data, true);
   const hash = hash256.digest(br.readBytes(80));
 
   br.seek(-80);

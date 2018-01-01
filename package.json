@@ -43,6 +43,7 @@
     "bupnp": "~0.0.1",
     "bval": "~0.0.1",
     "bweb": "~0.0.1",
+    "golomb": "github:bcoin-org/golomb",
     "n64": "~0.1.0"
   },
   "devDependencies": {

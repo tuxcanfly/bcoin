@@ -112,7 +112,7 @@ async function patchPathMaps() {
 }
 
 function parseWallets(data) {
-  const p = bio.reader(data);
+  const p = bio.read(data);
   const wids = [];
 
   while (p.left())
@@ -161,7 +161,7 @@ function accountToRaw(account) {
 
 function accountFromRaw(data) {
   const account = {};
-  const p = bio.reader(data);
+  const p = bio.read(data);
 
   account.name = p.readVarString('ascii');
   account.initialized = p.readU8() === 1;

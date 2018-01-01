@@ -299,7 +299,7 @@ Coins.prototype.toRaw = function toRaw() {
  */
 
 Coins.prototype.fromRaw = function fromRaw(data, hash, index) {
-  const br = bio.reader(data);
+  const br = bio.read(data);
   let pos = 0;
 
   this.version = br.readVarint();
@@ -352,7 +352,7 @@ Coins.prototype.fromRaw = function fromRaw(data, hash, index) {
  */
 
 Coins.parseCoin = function parseCoin(data, hash, index) {
-  const br = bio.reader(data);
+  const br = bio.read(data);
   const coin = new Coin();
   let pos = 0;
 
@@ -499,7 +499,7 @@ CoinEntry.prototype.toCoin = function toCoin(coins, index) {
     return coin;
   }
 
-  const br = bio.reader(this.raw);
+  const br = bio.read(this.raw);
 
   // Seek to the coin's offset.
   br.seek(this.offset);

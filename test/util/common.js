@@ -86,7 +86,7 @@ common.writeTX = function writeTX(name, tx, view) {
 };
 
 function parseUndo(data) {
-  const br = bio.reader(data);
+  const br = bio.read(data);
   const items = [];
 
   while (br.left()) {
