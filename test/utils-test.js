@@ -4,7 +4,7 @@
 'use strict';
 
 const {U64, I64} = require('n64');
-const {Validator} = require('bval');
+const Validator = require('bval');
 const {base58} = require('bstring');
 const {encoding} = require('bufio');
 const assert = require('./util/assert');
