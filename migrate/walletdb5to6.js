@@ -122,7 +122,7 @@ function parseWallets(data) {
 }
 
 function serializeWallets(wids) {
-  const p = bio.static();
+  const p = bio.write();
 
   p.writeU32(wids.length);
 
@@ -135,7 +135,7 @@ function serializeWallets(wids) {
 }
 
 function accountToRaw(account) {
-  const p = bio.static();
+  const p = bio.write();
 
   p.writeVarString(account.name, 'ascii');
   p.writeU8(account.initialized ? 1 : 0);

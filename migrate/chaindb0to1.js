@@ -51,7 +51,7 @@ async function updateState() {
 
   const hash = data.slice(0, 32);
 
-  let p = bio.static();
+  let p = bio.write();
   p.writeHash(hash);
   p.writeU64(0);
   p.writeU64(0);

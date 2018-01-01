@@ -98,7 +98,7 @@ function parseUndo(data) {
 }
 
 function serializeUndo(items) {
-  const bw = bio.static();
+  const bw = bio.write();
 
   for (const item of items) {
     bw.writeI64(item.value);

@@ -596,7 +596,7 @@ function entryFromRaw(data) {
 }
 
 function entryToRaw(entry, main) {
-  const bw = bio.static(116 + 1);
+  const bw = bio.write(116 + 1);
 
   bw.writeU32(entry.version);
   bw.writeHash(entry.prevBlock);

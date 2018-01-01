@@ -116,7 +116,7 @@ async function updateState() {
   console.log('Updating state...');
 
   if (raw.length === 40) {
-    const bw = bio.static(41);
+    const bw = bio.write(41);
     bw.writeBytes(raw);
     bw.writeU8(1);
     parent.put(layout.R.build(), bw.render());
@@ -153,7 +153,7 @@ async function updateBlockMap() {
         map.add(wid);
     }
 
-    const bw = bio.static(sizeMap(map));
+    const bw = bio.write(sizeMap(map));
     serializeMap(bw, map);
 
     parent.put(key, bw.render());
@@ -239,7 +239,7 @@ async function updateCoins(wid, bucket, batch) {
     br.readU8();
 
     if (br.left() === 0) {
-      const bw = bio.static(value.length + 1);
+      const bw = bio.write(value.length + 1);
       bw.writeBytes(value);
       bw.writeU8(0);
       batch.put(key, bw.render());
@@ -276,7 +276,7 @@ async function updateTX(wid, bucket, batch) {
 
     map.add(wid);
 
-    const bw = bio.static(sizeMap(map));
+    const bw = bio.write(sizeMap(map));
     serializeMap(bw, map);
     batch.put(layout.T.build(hash), bw.render());
 
@@ -413,7 +413,7 @@ async function updateWallet(wid) {
 
   // Unencrypted?
   if (kr.readU8() === 0) {
-    const bw = bio.static();
+    const bw = bio.write();
     bw.writeU8(0);
 
     // Skip useless varint.
@@ -523,7 +523,7 @@ async function updateAccount(wid, acct) {
     keys.push(key);
   }
 
-  const bw = bio.static();
+  const bw = bio.write();
 
   let flags = 0;
 
@@ -612,7 +612,7 @@ async function updatePaths() {
 
     type -= 2;
 
-    const bw = bio.static();
+    const bw = bio.write();
 
     bw.writeU32(account);
     bw.writeU8(keyType);
@@ -716,7 +716,7 @@ class BlockMapRecord {
 
   toRaw() {
     const size = this.getSize();
-    const bw = bio.static(size);
+    const bw = bio.write(size);
 
     bw.writeU32(this.txs.size);
 
@@ -792,7 +792,7 @@ class TXMapRecord {
 
   toRaw() {
     const size = this.getSize();
-    return this.toWriter(bio.static(size)).render();
+    return this.toWriter(bio.write(size)).render();
   }
 
   fromReader(br) {
@@ -850,7 +850,7 @@ function newBalance() {
 }
 
 function serializeBalance(bal) {
-  const bw = bio.static(32);
+  const bw = bio.write(32);
 
   bw.writeU64(bal.tx);
   bw.writeU64(bal.coin);

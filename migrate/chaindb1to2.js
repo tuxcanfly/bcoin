@@ -218,7 +218,7 @@ function injectCoin(undo, coin) {
 }
 
 function defaultOptions() {
-  const bw = bio.static();
+  const bw = bio.write();
   let flags = 0;
 
   if (options.spv)
@@ -243,7 +243,7 @@ function defaultOptions() {
 }
 
 function defaultDeployments() {
-  const bw = bio.static();
+  const bw = bio.write();
 
   bw.writeU8(options.network.deploys.length);
 
