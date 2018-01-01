@@ -219,7 +219,7 @@ Coins.prototype.isEmpty = function isEmpty() {
  */
 
 Coins.prototype.toRaw = function toRaw() {
-  const bw = bio.static();
+  const bw = bio.write();
   const length = this.size();
   const len = Math.ceil(length / 8);
 

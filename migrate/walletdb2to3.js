@@ -243,7 +243,7 @@ function parseWallets(data) {
 }
 
 function serializeWallets(wallets) {
-  const p = bio.static();
+  const p = bio.write();
 
   for (let i = 0; i < wallets.length; i++) {
     const wid = wallets[i];
