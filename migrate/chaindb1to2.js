@@ -173,7 +173,7 @@ async function reserializeUndo() {
     if (!item)
       break;
 
-    const br = bio.reader(item.value);
+    const br = bio.read(item.value);
     const undo = new UndoCoins();
 
     while (br.left()) {

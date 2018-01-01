@@ -89,7 +89,7 @@ describe('Coins', function() {
     const size = view.getSize(tx);
     const bw = bio.static(size);
     const raw = view.toWriter(bw, tx).render();
-    const br = bio.reader(raw);
+    const br = bio.read(raw);
     const res = CoinView.fromReader(br, tx);
 
     const prev = tx.inputs[0].prevout;
