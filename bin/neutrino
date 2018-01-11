@@ -15,6 +15,7 @@ const node = new NeutrinoNode({
   logLevel: 'debug',
   db: 'leveldb',
   persistent: true,
+  memory: false,
   workers: true,
   listen: true,
   loader: require
