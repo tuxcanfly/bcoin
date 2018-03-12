@@ -59,7 +59,7 @@ Note that certain chain options affect the format and indexing of the chain data
 - `selfish`: Enable "selfish" mode (no relaying of txes or blocks) (default: false).
 - `compact`: Enable compact block relay (default: true).
 - `bip37`: Enable serving of bip37 merkleblocks (default: false).
-- `bip157`: Enable serving of bip157 compact filters (default: false).
+- `bip157`: Enable indexing and serving of bip157 compact filters (default: false).
 - `bip151`: Enable bip151 peer-to-peer encryption (default: false).
 - `listen`: Accept incoming connections (default: true).
 - `max-outbound`: Max number of outbound connections (default: 8).
