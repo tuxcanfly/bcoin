@@ -721,7 +721,7 @@ describe('Node', function() {
     assert.strictEqual(meta.tx.txid(), tx2.txid());
   });
 
-  it('should get tx by addr', async () => {
+  it('should get coin/tx by addr', async () => {
     const addr = await wallet.receiveAddress();
     const mtx = await wallet.createTX({
       rate: 100000,
@@ -747,6 +747,10 @@ describe('Node', function() {
     const txs = await node.getTXByAddress(addr);
     const tx2 = txs[0];
     assert.strictEqual(tx.txid(), tx2.txid());
+
+    const coins = await node.getCoinsByAddress(addr);
+    const coin = coins[0];
+    assert.strictEqual(tx.txid(), coin.txid());
   });
 
   it('should cleanup', async () => {
