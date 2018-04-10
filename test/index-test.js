@@ -9,7 +9,7 @@ const Input = require('../lib/primitives/input');
 const Outpoint = require('../lib/primitives/outpoint');
 const MTX = require('../lib/primitives/mtx');
 const hash256 = require('bcrypto/lib/hash256');
-const IndexDB = require('../lib/index/indexdb');
+const IndexDB = require('../lib/indexer/indexdb');
 const random = require('bcrypto/lib/random');
 
 function dummyInput() {
@@ -82,6 +82,7 @@ describe('Index', function() {
   this.timeout(5000);
 
   it('should open indexdb', async () => {
+    await chain.open();
     await idb.open();
   });
 
