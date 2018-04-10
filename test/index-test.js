@@ -78,7 +78,7 @@ const options = {
 };
 const idb = new IndexDB(options);
 
-describe('Index', function() {
+describe('Indexer', function() {
   this.timeout(5000);
 
   it('should open indexdb', async () => {
