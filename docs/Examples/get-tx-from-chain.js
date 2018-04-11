@@ -33,7 +33,7 @@ const indexer = new bcoin.Indexer({
   memory: true,
   network: 'testnet',
   chain: chain,
-  indexers: [bcoin.indexer.tx, bcoin.indexer.address]
+  indexers: [bcoin.indexer.TXIndexer]
 });
 
 // Open the pool (implicitly opens mempool and chain).
@@ -73,7 +73,8 @@ const indexer = new bcoin.Indexer({
 
   const tip = await indexer.getTip();
   const block = await chain.getBlock(tip.hash);
-  const meta = await indexer.getMeta(block.txs[0].hash());
+  const txindexer = indexer.db.indexers.get('tx');
+  const meta = await txindexer.getMeta(block.txs[0].hash());
   const tx = meta.tx;
   const coinview = await chain.db.getSpentView(meta);
 
