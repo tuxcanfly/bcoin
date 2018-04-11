@@ -33,8 +33,7 @@ const indexer = new bcoin.Indexer({
   memory: true,
   network: 'testnet',
   chain: chain,
-  indexTX: true,
-  indexAddress: true
+  indexers: [bcoin.indexer.tx, bcoin.indexer.address]
 });
 
 // Open the pool (implicitly opens mempool and chain).
