@@ -28,12 +28,11 @@ const pool = new bcoin.Pool({
 });
 
 // Create a chain indexer which indexes tx by hash/addr
-const indexer = new bcoin.Indexer({
+const indexer = new bcoin.indexer.TXIndexer({
   logger: logger,
   memory: true,
   network: 'testnet',
-  chain: chain,
-  indexers: [bcoin.indexer.TXIndexer]
+  chain: chain
 });
 
 // Open the pool (implicitly opens mempool and chain).
@@ -73,8 +72,7 @@ const indexer = new bcoin.Indexer({
 
   const tip = await indexer.getTip();
   const block = await chain.getBlock(tip.hash);
-  const txindexer = indexer.db.indexers.get('tx');
-  const meta = await txindexer.getMeta(block.txs[0].hash());
+  const meta = await indexer.getMeta(block.txs[0].hash());
   const tx = meta.tx;
   const coinview = await chain.db.getSpentView(meta);
 
