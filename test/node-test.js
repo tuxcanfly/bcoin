@@ -18,11 +18,14 @@ const node = new FullNode({
   apiKey: 'foo',
   network: 'regtest',
   workers: true,
-  indexTX: true,
-  indexAddress: true,
-  plugins: [require('../lib/wallet/plugin'), require('../lib/indexer/plugin')]
+  plugins: [
+    require('../lib/wallet/plugin'),
+    require('../lib/indexer/txindexer/plugin'),
+    require('../lib/indexer/addrindexer/plugin')
+  ]
 });
-node.indexer = node.require('indexer');
+node.txindex = node.require('txindexer');
+node.addrindex = node.require('addrindexer');
 
 const chain = node.chain;
 const miner = node.miner;

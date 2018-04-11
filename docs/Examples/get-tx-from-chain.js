@@ -28,13 +28,11 @@ const pool = new bcoin.Pool({
 });
 
 // Create a chain indexer which indexes tx by hash/addr
-const indexer = new bcoin.Indexer({
+const indexer = new bcoin.indexer.TXIndexer({
   logger: logger,
   memory: true,
   network: 'testnet',
-  chain: chain,
-  indexTX: true,
-  indexAddress: true
+  chain: chain
 });
 
 // Open the pool (implicitly opens mempool and chain).
