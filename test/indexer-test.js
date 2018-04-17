@@ -3,6 +3,7 @@
 
 'use strict';
 
+const bdb = require('bdb');
 const Chain = require('../lib/blockchain/chain');
 const Address = require('../lib/primitives/address');
 const Input = require('../lib/primitives/input');
@@ -76,27 +77,30 @@ const options = {
   'network': 'simnet',
   'chain': chain
 };
-const idb = new Indexer(options);
+const indexer = new Indexer(options);
+indexer.db = bdb.create({
+  memory: true
+});
 
 describe('Indexer', function() {
   this.timeout(5000);
 
   it('should open indexer', async () => {
     await chain.open();
-    await idb.open();
+    await indexer.open();
   });
 
   it('should index block', async () => {
-    const entry = nextEntry(idb);
-    const block = nextBlock(idb);
-    const view = nextCoinView(idb);
-    await idb.addBlock(entry, block, view);
+    const entry = nextEntry(indexer);
+    const block = nextBlock(indexer);
+    const view = nextCoinView(indexer);
+    await indexer.addBlock(entry, block, view);
   });
 
   it('should unindex block', async () => {
-    const entry = nextEntry(idb);
-    const block = nextBlock(idb);
-    const view = nextCoinView(idb);
-    await idb.removeBlock(entry, block, view);
+    const entry = nextEntry(indexer);
+    const block = nextBlock(indexer);
+    const view = nextCoinView(indexer);
+    await indexer.removeBlock(entry, block, view);
   });
 });
