@@ -9,8 +9,7 @@ const logger = new Logger({
   level: 'debug'
 });
 
-// Create a blockchain and store it in leveldb.
-// `db` also accepts `rocksdb` and `lmdb`.
+// Create an in-memory blockchain.
 const chain = new bcoin.Chain({
   logger: logger,
   memory: true,
@@ -27,8 +26,8 @@ const pool = new bcoin.Pool({
   maxPeers: 8
 });
 
-// Create a chain indexer which indexes tx by hash/addr
-const indexer = new bcoin.indexer.TXIndexer({
+// Create a chain indexer which indexes tx by hash
+const indexer = new bcoin.TXIndexer({
   logger: logger,
   memory: true,
   network: 'testnet',

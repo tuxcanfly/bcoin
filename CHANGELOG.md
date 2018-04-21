@@ -30,6 +30,27 @@ An index can be dropped by just deleting the corresponding database.
   Default locations are `prefix` + `/index` e.g.: `~/.bcoin/testnet/index/tx`,
   `~/.bcoin/testnet/index/addr`.
 
+- `__/lib/blockchain/chain__` - the following methods have been moved out of
+  the chain to the indexers:
+
+  `node.txindex` implements:
+
+  + `getMeta(hash)`
+  + `getTX(hash)`
+  + `hasTX(hash)`
+
+  `node.addrindex` implements:
+
+  + `getCoinsByAddress(addrs)`
+  + `getHashesByAddress(addrs)`
+  + `getTXByAddress(addrs)`
+  + `getMetaByAddress(addrs)`
+
+  Using these methods on the chain is deprecated.
+
+
+- `__/lib/blockchain/chain__` - `getSpentView` accepts a `TXMeta` insted of `TX`
+
 ## v1.0.0
 
 ### Migration
@@ -179,7 +200,6 @@ of `*`, which notifies them of events on _all_ wallets).
   Due to the use of class syntax, something like `bcoin.Address(str)` is no
   longer possible. Please take a look at `lib/bcoin.js` to get a better idea of
   what has changed.
-- __/bcoin/blockchain/chain - getSpentView accepts a TXMeta insted of TX
 
 ## v1.0.0-beta.15
 
