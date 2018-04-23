@@ -22,8 +22,8 @@ An index can be dropped by just deleting the corresponding database.
   all indexers, including setting up the database, handling chain events such
   as new block etc.
 
-- By default, bcoin ships `TXIndexer`, `AddrIndexer` and their plugins. These
-  plugins preserve all the existing indexing functionality and can be enabled
+- By default, bcoin ships `TXIndexer`, `AddrIndexer` implementations. These
+  indexers preserve all the existing indexing functionality and can be enabled
   via the same flags i.e. `--index-tx` `--index-address`, for compatibility.
 
 - Database location can be configured via `--index-prefix` config option.
