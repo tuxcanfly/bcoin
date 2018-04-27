@@ -34,7 +34,7 @@ const indexer = new bcoin.TXIndexer({
   chain: chain
 });
 
-// Open the pool (implicitly opens mempool and chain).
+// Open the chain, pool and indexer
 (async function() {
   await logger.open();
 
