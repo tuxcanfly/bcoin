@@ -32,32 +32,36 @@ if (index !== -1) {
 const chain = new Chain({
   db: 'ffldb',
   location: location,
-  network: options.network.type
+  network: 'simnet'
 });
 
 const blockio = BlockIO({
   location: from,
-  network: options.network.type
+  network: 'simnet'
 });
 
-const blockstream = new BlockStream({network: options.network.type});
+const blockstream = new BlockStream({network: 'simnet'});
 
-const end = new Promise((resolve, reject) => {
-  blockstream.on('data', async (chunk) => {
-      const block = Block.fromRaw(chunk);
-      try {
-        await chain.add(block);
-        console.log('imported block: %s', block.rhash());
-      } catch (e) {
-        console.warn('%s: ', e);
-      }
-  })
-  .on('close', () => {
-    console.log('import finished');
-    resolve();
-  })
-  .on('error', reject);
+blockstream.on('data', async (chunk) => {
+  const block = Block.fromRaw(chunk);
+  try {
+    await chain.add(block);
+    console.log('imported block: %s', block.rhash());
+  } catch (e) {
+    console.warn('%s: ', e);
+  }
+})
+.on('close', () => {
+  console.log('import finished');
+})
+.on('error', (e) => {
+  console.error(e);
 });
+
+async function block() {
+  return new Promise((resolve, reject) => {
+  });
+};
 
 async function importFlatFiles() {
   const [file] = await blockio.scanFiles();
@@ -65,8 +69,8 @@ async function importFlatFiles() {
     const path = blockio.filepath(i);
     const blockfile = fs.createReadStream(path);
     blockfile.pipe(blockstream);
-    await end;
   }
+  await block();
 };
 
 (async () => {
