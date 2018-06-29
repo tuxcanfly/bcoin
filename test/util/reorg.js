@@ -5,8 +5,7 @@ const Chain = require('../../lib/blockchain/chain');
 const CPUMiner = require('../../lib/mining/cpuminer');
 
 /**
- * reorg
- * using miner reorgs the chain to given height
+ * Reorgs the chain to given height using miners.
  * @param {Chain} chain chain
  * @param {CPUMiner} cpu cpuminer
  * @param {Number} height height
