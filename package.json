@@ -48,6 +48,7 @@
     "bupnp": "~0.2.2",
     "bval": "~0.1.2",
     "bweb": "~0.1.3",
+    "golomb": "github:tuxcanfly/golomb#bip157-updates",
     "mrmr": "~0.1.1",
     "n64": "~0.2.1"
   },
