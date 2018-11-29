@@ -53,8 +53,7 @@
     "golomb": "github:tuxcanfly/golomb#bip157-updates"
   },
   "devDependencies": {
-    "bmocha": "^0.1.0",
-    "istanbul": "^1.1.0-alpha.1"
+    "bmocha": "^0.1.0"
   },
   "main": "./lib/bcoin.js",
   "bin": {
