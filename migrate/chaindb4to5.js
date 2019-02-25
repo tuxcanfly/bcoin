@@ -65,6 +65,7 @@ async function migrateBlocks() {
 
   total = 0;
 
+  // TODO: journaling state
   while (await iter.next()) {
     const {key} = iter;
 
@@ -90,8 +91,8 @@ async function migrateBlocks() {
 
   parent = db.batch();
 
-  updateVersion();
-  migrateBlocks();
+  await updateVersion();
+  await migrateBlocks();
 
   await parent.write();
   await db.close();
