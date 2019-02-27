@@ -61,22 +61,8 @@ async function migrateBlocks() {
       console.log('Migrated up %d blocks.', total);
     }
     await blockStore.write(key, value);
-  });
-
-  total = 0;
-
-  // TODO: journaling state
-  while (await iter.next()) {
-    const {key} = iter;
-
     parent.del(key);
-
-    if (++total % 10000 === 0) {
-      console.log('Cleaned up %d blocks.', total);
-      await parent.write();
-      parent = db.batch();
-    }
-  }
+  });
 }
 
 /*
