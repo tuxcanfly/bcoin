@@ -57,11 +57,13 @@ async function migrateBlocks() {
   let total = 0;
   await iter.each(async (key, value) => {
     ++total;
-    if (++total % 10 === 0) {
+    if (++total % 10000 === 0) {
       console.log('Migrated up %d blocks.', total);
+      await blockStore.write(key, value);
+      parent.del(key);
+      await parent.write();
+      parent = db.batch();
     }
-    await blockStore.write(key, value);
-    parent.del(key);
   });
 }
 
