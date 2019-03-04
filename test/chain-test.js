@@ -30,8 +30,7 @@ const workers = new WorkerPool({
 });
 
 const chain = new Chain({
-  location: '/tmp/bcon-testnet',
-  memory: true,
+  location: '/tmp/bcoin-testnet',
   network,
   workers
 });
