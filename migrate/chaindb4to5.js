@@ -56,7 +56,8 @@ async function migrateBlocks() {
 
   let total = 0;
   await iter.each(async (key, value) => {
-    await blockStore.write(key, value);
+    const hash = key.slice(1);
+    await blockStore.write(hash, value);
     parent.del(key);
 
     if (++total % 10000 === 0) {
