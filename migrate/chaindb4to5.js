@@ -56,8 +56,6 @@ async function migrateBlocks() {
 
   let total = 0;
   await iter.each(async (key, value) => {
-    ++total;
-
     await blockStore.write(key, value);
     parent.del(key);
 
