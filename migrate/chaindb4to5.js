@@ -103,6 +103,7 @@ async function migrateBlocks() {
   await migrateBlocks();
   await updateVersion();
 
+  await db.compactRange();
   await db.close();
   await blockStore.close();
 })().then(() => {
