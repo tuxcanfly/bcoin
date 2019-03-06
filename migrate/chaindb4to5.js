@@ -9,8 +9,6 @@ const {resolve} = require('path');
 
 assert(process.argv.length > 2, 'Please pass in a database path.');
 
-let parent = null;
-
 // migration -
 // chaindb: leveldb to flat files
 
@@ -36,6 +34,20 @@ const blockStore = new FileBlockStore({
 });
 
 async function updateVersion() {
+  const ver = checkVersion();
+
+  console.log('Updating version to %d.', ver + 1);
+
+  const buf = Buffer.allocUnsafe(5 + 4);
+  buf.write('chain', 0, 'ascii');
+  buf.writeUInt32LE(5, 5, true);
+
+  const parent = db.batch();
+  parent.put(layout.V.encode(), buf);
+  await parent.write();
+}
+
+async function checkVersion() {
   console.log('Checking version.');
 
   const data = await db.get(layout.V.encode());
@@ -46,17 +58,13 @@ async function updateVersion() {
   if (ver !== 4)
     throw Error(`DB is version ${ver}.`);
 
-  console.log('Updating version to %d.', ver + 1);
-
-  const buf = Buffer.allocUnsafe(5 + 4);
-  buf.write('chain', 0, 'ascii');
-  buf.writeUInt32LE(5, 5, true);
-
-  parent.put(layout.V.encode(), buf);
+  return ver;
 }
 
 async function migrateBlocks() {
   console.log('Migrating blocks');
+
+  let parent = db.batch();
 
   const iter = db.iterator({
     gte: layout.b.min(),
@@ -77,6 +85,7 @@ async function migrateBlocks() {
       parent = db.batch();
     }
   });
+  await parent.write();
 }
 
 /*
@@ -90,12 +99,10 @@ async function migrateBlocks() {
 
   console.log('Opened %s.', process.argv[2]);
 
-  parent = db.batch();
-
+  await checkVersion();
   await migrateBlocks();
   await updateVersion();
 
-  await parent.write();
   await db.close();
   await blockStore.close();
 })().then(() => {
