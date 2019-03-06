@@ -4,6 +4,7 @@ const assert = require('assert');
 const bdb = require('bdb');
 const layout = require('../lib/blockchain/layout');
 const FileBlockStore = require('../lib/blockstore/file');
+const fs = require('bfile');
 const {resolve} = require('path');
 
 assert(process.argv.length > 2, 'Please pass in a database path.');
@@ -21,8 +22,17 @@ const db = bdb.create({
   createIfMissing: false
 });
 
+async function ensure(location) {
+  if (fs.unsupported)
+    return undefined;
+
+  return fs.mkdirp(location);
+}
+
+const location = resolve(process.argv[2], '../blocks');
+
 const blockStore = new FileBlockStore({
-  location: resolve(process.argv[2], '../blocks')
+  location: location
 });
 
 async function updateVersion() {
@@ -75,6 +85,7 @@ async function migrateBlocks() {
 
 (async () => {
   await db.open();
+  await ensure(location);
   await blockStore.open();
 
   console.log('Opened %s.', process.argv[2]);
