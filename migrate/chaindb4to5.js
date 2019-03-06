@@ -4,6 +4,7 @@ const assert = require('assert');
 const bdb = require('bdb');
 const layout = require('../lib/blockchain/layout');
 const FileBlockStore = require('../lib/blockstore/file');
+const {resolve} = require('path');
 
 assert(process.argv.length > 2, 'Please pass in a database path.');
 
@@ -21,7 +22,7 @@ const db = bdb.create({
 });
 
 const blockStore = new FileBlockStore({
-  location: process.argv[2]
+  location: resolve(process.argv[2], '../blocks')
 });
 
 async function updateVersion() {
