@@ -92,8 +92,8 @@ async function migrateBlocks() {
 
   parent = db.batch();
 
-  await updateVersion();
   await migrateBlocks();
+  await updateVersion();
 
   await parent.write();
   await db.close();
