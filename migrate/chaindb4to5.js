@@ -34,7 +34,7 @@ const blockStore = new FileBlockStore({
 });
 
 async function updateVersion() {
-  const ver = checkVersion();
+  const ver = await checkVersion();
 
   console.log('Updating version to %d.', ver + 1);
 
