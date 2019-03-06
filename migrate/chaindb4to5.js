@@ -3,11 +3,14 @@
 const assert = require('assert');
 const bdb = require('bdb');
 const layout = require('../lib/blockchain/layout');
-
-// changes:
-// removes tx, addr indexes i.e layout.t, layout.T, layout.C
+const FileBlockStore = require('../lib/blockstore/file');
+const fs = require('bfile');
+const {resolve} = require('path');
 
 assert(process.argv.length > 2, 'Please pass in a database path.');
+
+// migration -
+// chaindb: leveldb to flat files
 
 const db = bdb.create({
   location: process.argv[2],
@@ -17,32 +20,72 @@ const db = bdb.create({
   createIfMissing: false
 });
 
-async function removeKey(name, key) {
+async function ensure(location) {
+  if (fs.unsupported)
+    return undefined;
+
+  return fs.mkdirp(location);
+}
+
+const location = resolve(process.argv[2], '../blocks');
+
+const blockStore = new FileBlockStore({
+  location: location
+});
+
+async function updateVersion() {
+  const ver = await checkVersion();
+
+  console.log('Updating version to %d.', ver + 1);
+
+  const buf = Buffer.allocUnsafe(5 + 4);
+  buf.write('chain', 0, 'ascii');
+  buf.writeUInt32LE(5, 5, true);
+
+  const parent = db.batch();
+  parent.put(layout.V.encode(), buf);
+  await parent.write();
+}
+
+async function checkVersion() {
+  console.log('Checking version.');
+
+  const data = await db.get(layout.V.encode());
+  assert(data, 'No version.');
+
+  const ver = data.readUInt32LE(5, true);
+
+  if (ver !== 4)
+    throw Error(`DB is version ${ver}.`);
+
+  return ver;
+}
+
+async function migrateBlocks() {
+  console.log('Migrating blocks');
+
+  let parent = db.batch();
+
   const iter = db.iterator({
-    gte: key.min(),
-    lte: key.max(),
-    reverse: true,
-    keys: true
+    gte: layout.b.min(),
+    lte: layout.b.max(),
+    keys: true,
+    values: true
   });
 
-  let batch = db.batch();
   let total = 0;
-
-  while (await iter.next()) {
-    const {key} = iter;
-
-    batch.del(key);
+  await iter.each(async (key, value) => {
+    const hash = key.slice(1);
+    await blockStore.write(hash, value);
+    parent.del(key);
 
     if (++total % 10000 === 0) {
-      console.log('Cleaned up %d %s index records.', total, name);
-      await batch.write();
-      batch = db.batch();
+      console.log('Migrated up %d blocks.', total);
+      await parent.write();
+      parent = db.batch();
     }
-  }
-
-  await batch.write();
-
-  console.log('Cleaned up %d %s index records.', total, name);
+  });
+  await parent.write();
 }
 
 /*
@@ -56,14 +99,6 @@ async function removeKey(name, key) {
   console.log('Checking version.');
   await db.verify(layout.V.encode(), 'chain', 4);
 
-  const t = bdb.key('t', ['hash256']);
-  const T = bdb.key('T', ['hash', 'hash256']);
-  const C = bdb.key('C', ['hash', 'hash256', 'uint32']);
-
-  await removeKey('hash -> tx', t);
-  await removeKey('addr -> tx', T);
-  await removeKey('addr -> coin', C);
-
   console.log('Compacting database...');
   await db.compactRange();
 
@@ -72,6 +107,18 @@ async function removeKey(name, key) {
   await db.verify(layout.V.encode(), 'chain', 5);
 
   await db.close();
+  await ensure(location);
+  await blockStore.open();
+
+  console.log('Opened %s.', process.argv[2]);
+
+  await checkVersion();
+  await migrateBlocks();
+  await updateVersion();
+
+  await db.compactRange();
+  await db.close();
+  await blockStore.close();
 })().then(() => {
   console.log('Migration complete.');
   process.exit(0);
