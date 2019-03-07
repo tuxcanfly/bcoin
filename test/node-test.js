@@ -16,6 +16,12 @@ const Peer = require('../lib/net/peer');
 const InvItem = require('../lib/primitives/invitem');
 const invTypes = InvItem.types;
 
+const ports = {
+  p2p: 49331,
+  node: 49332,
+  wallet: 49333
+};
+
 const node = new FullNode({
   memory: true,
   apiKey: 'foo',
@@ -23,7 +29,12 @@ const node = new FullNode({
   workers: true,
   indexTX: true,
   indexAddress: true,
-  plugins: [require('../lib/wallet/plugin')]
+  plugins: [require('../lib/wallet/plugin')],
+  port: ports.p2p,
+  httpPort: ports.node,
+  env: {
+    'BCOIN_WALLET_HTTP_PORT': ports.wallet.toString()
+  }
 });
 
 const chain = node.chain;
