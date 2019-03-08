@@ -41,6 +41,19 @@ describe('BIP158 Filters', function() {
       const filter = GCSFilter.fromBlock(block, view);
       assert.strictEqual(filter.toRaw().toString('hex'), json[5]);
 
+      // check that prevout scripts confirm against the filter
+      if (json[3].length) {
+        const key = block.hash().slice(0, 16);
+        for (let script of json[3]) {
+          const prevOutScript = Buffer.from(script, 'hex');
+          if (prevOutScript.length)
+            assert(
+              filter.match(key, prevOutScript),
+              `Filter match failed for block ${height}`
+            );
+        }
+      }
+
       const header = filter.header(Buffer.from(json[4], 'hex').reverse());
       assert.strictEqual(header.reverse().toString('hex'), json[6]);
     });
