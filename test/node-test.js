@@ -593,8 +593,8 @@ describe('Node', function() {
       isvalid: true,
       address: addr.toString(node.network),
       scriptPubKey: Script.fromAddress(addr, node.network).toJSON(),
-      ismine: false,
-      iswatchonly: false
+      isscript: false,
+      iswitness: false
     });
   });
 
