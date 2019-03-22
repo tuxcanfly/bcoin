@@ -6,6 +6,7 @@
 const assert = require('./util/assert');
 const consensus = require('../lib/protocol/consensus');
 const Coin = require('../lib/primitives/coin');
+const Block = require('../lib/primitives/block');
 const Script = require('../lib/script/script');
 const Opcode = require('../lib/script/opcode');
 const FullNode = require('../lib/node/fullnode');
@@ -749,7 +750,7 @@ describe('Node', function() {
 
   it('should get tx by hash', async () => {
     const block = await mineBlock();
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
 
     const tx = block.txs[0];
     const hash = tx.hash();
@@ -783,7 +784,7 @@ describe('Node', function() {
     job.refresh();
 
     const block = await job.mineAsync();
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
 
     await new Promise(r => setTimeout(r, 300));
 
