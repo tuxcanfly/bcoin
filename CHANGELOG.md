@@ -14,8 +14,9 @@ efficiency, reliability and portability.
   half for those running with `txindex` enabled.
 - The `txindex` and `addrindex` can now be enabled after the initial
   block download.
-- The `addrindex` has been sorted to support querying for large sets
-  of results, and will no longer cause CPU and memory exhaustion issues.
+- The `addrindex` has been prefixed by address type and sorted to support
+  querying for large sets of results, and will no longer cause CPU and memory
+  exhaustion issues.
 
 To upgrade to the new disk layout it's necessary to move block data
 from LevelDB (e.g. `~/.bcoin/chain`) to a new file based block
