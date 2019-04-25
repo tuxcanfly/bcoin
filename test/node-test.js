@@ -30,8 +30,6 @@ const node = new FullNode({
   indexTX: true,
   indexAddress: true,
   plugins: [require('../lib/wallet/plugin')],
-  indexTX: true,
-  indexAddress: true,
   port: ports.p2p,
   httpPort: ports.node,
   env: {
@@ -752,38 +750,6 @@ describe('Node', function() {
 
     const meta = await node.getMeta(hash);
     assert.strictEqual(meta.tx.txid(), tx2.txid());
-  });
-
-  it('should get coin/tx by addr', async () => {
-    const addr = await wallet.receiveAddress();
-    const mtx = await wallet.createTX({
-      rate: 100000,
-      outputs: [{
-        value: 100000,
-        address: addr
-      }]
-    });
-
-    await wallet.sign(mtx);
-
-    const tx = mtx.toTX();
-    const job = await miner.createJob();
-
-    job.addTX(tx, mtx.view);
-    job.refresh();
-
-    const block = await job.mineAsync();
-    await chain.add(block);
-
-    await new Promise(r => setTimeout(r, 300));
-
-    const txs = await node.getTXByAddress(addr);
-    const tx2 = txs[0];
-    assert.strictEqual(tx.txid(), tx2.txid());
-
-    const coins = await node.getCoinsByAddress(addr.hash);
-    const coin = coins[0];
-    assert.strictEqual(tx.txid(), coin.txid());
   });
 
   it('should broadcast a tx from inventory', async () => {
