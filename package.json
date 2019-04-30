@@ -49,7 +49,8 @@
     "bval": "~0.1.6",
     "bweb": "~0.1.9",
     "mrmr": "~0.1.8",
-    "n64": "~0.2.10"
+    "n64": "~0.2.10",
+    "golomb": "github:tuxcanfly/golomb#bip157-updates"
   },
   "devDependencies": {
     "bmocha": "^2.1.2"
